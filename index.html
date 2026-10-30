@@ -902,20 +902,21 @@ document.getElementById('wi-reset').addEventListener('click',()=>{Object.keys(wi
    Points are worked out automatically: scale by rank + 10 for 300/300 (or +1 for any 100/100).
    DRAFT: round 13 and all marks are SAMPLE data so the pages have something to show.
    Round 14 points are real. Replace this list with real results, then set SAMPLE_MARKS to false. */
-const SAMPLE_MARKS=true;
+const SAMPLE_MARKS=false;
 const RACES=[
-{round:13,sample:true,results:[
-{d:'Anshuman Garg',rank:1,phy:98,che:95,mat:97},{d:'Mihir Thakur',rank:2,phy:92,che:90,mat:88},{d:'Aryan Mishra',rank:3,phy:90,che:88,mat:84},{d:'Agastya Arya',rank:5,phy:84,che:82,mat:79},
-{d:'Prajwal Zurale',rank:8,phy:78,che:76,mat:77},{d:'Shivam Chanshetti',rank:12,phy:72,che:70,mat:70},{d:'Tanmay Katiyaar',rank:13,phy:70,che:68,mat:67},{d:'Akshaj Yarlagadda',rank:21,phy:58,che:56,mat:54}]},
-{round:14,sample:true,results:[
-{d:'Anshuman Garg',rank:1,phy:96,che:94,mat:96},{d:'Mihir Thakur',rank:4,phy:88,che:84,mat:86},{d:'Aryan Mishra',rank:6,phy:84,che:82,mat:81},{d:'Agastya Arya',rank:9,phy:78,che:76,mat:77},
-{d:'Prajwal Zurale',rank:11,phy:76,che:72,mat:76},{d:'Tanmay Katiyaar',rank:14,phy:64,che:62,mat:64},{d:'Akshaj Yarlagadda',rank:19,phy:58,che:56,mat:61},{d:'Shivam Chanshetti',dns:true}]},
-{round:15,noMarks:true,results:[
-{d:'Anshuman Garg',rank:1,ties:2},{d:'Mihir Thakur',rank:1,ties:2},
-{d:'Aryan Mishra',rank:6},{d:'Agastya Arya',dns:true},{d:'Prajwal Zurale',rank:13,approx:true},{d:'Tanmay Katiyaar',rank:13,approx:true},{d:'Akshaj Yarlagadda',dns:true},{d:'Shivam Chanshetti',dns:true}]}
+{round:14,partial:true,results:[
+{d:'Anshuman Garg',rank:1,phy:81,che:72,mat:86},{d:'Mihir Thakur',rank:4},{d:'Aryan Mishra',rank:6},{d:'Agastya Arya',rank:9,phy:66,che:42,mat:49},
+{d:'Prajwal Zurale',rank:11},{d:'Tanmay Katiyaar',rank:13,approx:true},{d:'Akshaj Yarlagadda',rank:13,approx:true},{d:'Shivam Chanshetti',dns:true}]},
+{round:15,partial:true,results:[
+{d:'Anshuman Garg',rank:1,ties:2,phy:76,che:75,mat:81},{d:'Mihir Thakur',rank:1,ties:2,phy:71,che:90,mat:71},
+{d:'Aryan Mishra',rank:6},{d:'Agastya Arya',dns:true},
+{d:'Prajwal Zurale',rank:13,approx:true},{d:'Tanmay Katiyaar',rank:13,approx:true},{d:'Akshaj Yarlagadda',dns:true},{d:'Shivam Chanshetti',dns:true}]}
 ];
-/* ties:2 = two students share this rank, so they split the points of the places they cover (1st and 2nd = (25+22)/2 = 23.5 each).
-   approx:true = only known to be outside the top 12 (shown as 13+). Round 15 marks are not entered yet (noMarks). */
+/* ===== How to add a race =====
+   rank = overall rank among ALL 30. ties:2 = two students share that rank (they split the points of the places).
+   approx:true = only known to be outside the top 12 (shown 13+). dns:true = did not sit.
+   phy / che / mat = marks out of 100. Leave them out if unknown; averages only use marks that are filled in.
+   partial:true = some marks are still missing (shows a note on the race page). */
 const SUBJ=[['phy','Physics','#ffd166'],['che','Chemistry','#6ee7b7'],['mat','Maths','#b388ff']];
 const isN=v=>typeof v==='number'&&isFinite(v);
 const totM=r=>(isN(r.phy)&&isN(r.che)&&isN(r.mat))?r.phy+r.che+r.mat:null;
@@ -976,7 +977,7 @@ const best={};SUBJ.forEach(s=>best[s[0]]=Math.max(0,...fin.map(x=>x[s[0]]).filte
 const w=fin[0],wd=w&&drivers.find(d=>d.name===w.d),dt=roundDate(k);
 const idx=RACES.indexOf(race),prv=RACES[idx-1],nxt=RACES[idx+1];
 el.innerHTML='<div class="rp-hero"><div class="wrap"><button class="btn alt" id="race-back">← Back</button><div class="rp-k">Round '+k+' of '+TOTAL_ROUNDS+'</div><h2>'+raceName(k)+'</h2><p>'+dpart(dt,{weekday:'long',day:'numeric',month:'long',year:'numeric'})+(race.sample?'  (sample marks)':'')+'</p></div></div>'
-+'<div class="wrap page-body">'+sampleNote()+(race.noMarks?'<div class="sample-note"><b>Marks not added yet.</b> Points come from the rank list. Add phy, che and mat for this round in <code>RACES</code> to show the marks and award any bonus.</div>':'')
++'<div class="wrap page-body">'+sampleNote()+((race.noMarks||race.partial)?'<div class="sample-note"><b>'+(race.noMarks?'Marks not added yet.':'Some marks are missing.')+'</b> Points come from the rank list. Drivers shown with dashes have no marks yet, so they are left out of the averages. Add phy, che and mat in <code>RACES</code> to fill them in and check for bonuses.</div>':'')
 +'<div class="pf-stats"><div class="pfs"><div class="k">Top in group</div><div class="v" style="font-size:24px">'+(wd?splitName(wd.name).last:'-')+'</div></div><div class="pfs"><div class="k">Highest total</div><div class="v">'+(tots.length?Math.max(...tots):'-')+'</div></div><div class="pfs"><div class="k">Average total</div><div class="v">'+f1(avgOf(tots))+'</div></div><div class="pfs"><div class="k">Entered</div><div class="v">'+rows.length+'</div></div></div>'
 +'<div class="rt-wrap" style="margin-top:22px"><table class="rt"><thead><tr><th>Pos</th><th>Driver</th><th class="hide-s">Team</th><th class="r">Rank of 30</th>'+SUBJ.map(s=>'<th class="r hide-s" style="color:'+s[2]+'">'+s[1].slice(0,4)+'</th>').join('')+'<th class="r">Total</th><th class="r">Points</th></tr></thead><tbody>'
 +rows.map((x,i)=>{const d=drivers.find(z=>z.name===x.d);if(!d)return '';const b=bonusOf(x);
@@ -1011,7 +1012,7 @@ el.innerHTML=sampleNote()+'<div class="rec-grid">'+recs+'</div>'
 function renderAcademics(){
 const el=document.getElementById('acad-body');
 if(!RACES.length){el.innerHTML=noRaces();return}
-const rows=drivers.map(d=>({d,s:dStats(d)})).filter(o=>o.s.n).sort((a,b)=>b.s.avg.tot-a.s.avg.tot);
+const rows=drivers.map(d=>({d,s:dStats(d)})).filter(o=>o.s.avg.tot!=null).sort((a,b)=>b.s.avg.tot-a.s.avg.tot);
 const allTot=rows.map(o=>o.s.avg.tot),cls=avgOf(allTot);
 const tr=o=>{const t=o.s.rs.map(q=>totM(q.x)).filter(v=>v!==null);if(t.length<2)return '<span class="prev">-</span>';const dl=t[t.length-1]-t[t.length-2];return '<span class="prev'+(dl>0?' gain':'')+'">'+(dl>0?'+':'')+dl+'</span>'};
 el.innerHTML=sampleNote()
