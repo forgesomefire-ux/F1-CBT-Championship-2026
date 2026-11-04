@@ -583,11 +583,11 @@ html body .hero:before{background:linear-gradient(115deg,rgba(255,31,46,.9) 0 46
 <script>
 
 const drivers=[
-{pos:1,num:7,name:"Anshuman Garg",prev:23.5,team:"Mercedes",points:202.5,bar:100},
-{pos:2,num:2,name:"Mihir Thakur",prev:23.5,team:"Red Bull",points:168.5,bar:81},
+{pos:1,num:7,name:"Anshuman Garg",prev:23.5,team:"Mercedes",points:224.5,bar:100},
+{pos:2,num:2,name:"Mihir Thakur",prev:23.5,team:"Red Bull",points:186.5,bar:81},
 {pos:3,num:45,name:"Aryan Mishra",prev:16,team:"Ferrari",points:136,bar:67},
-{pos:4,num:33,name:"Prajwal Zurale",prev:4,team:"Mclaren",points:84,bar:47},
-{pos:5,num:12,name:"Agastya Arya",prev:10,team:"Mclaren",points:89,bar:50},
+{pos:4,num:33,name:"Prajwal Zurale",prev:4,team:"Mclaren",points:96,bar:47},
+{pos:5,num:12,name:"Agastya Arya",prev:10,team:"Mclaren",points:90,bar:50},
 {pos:6,num:10,name:"Tanmay Katiyaar",prev:0,team:"Ferrari",points:20,bar:13},
 {pos:7,num:69,name:"Akshaj Yarlagadda",prev:0,team:"Red Bull",points:2,bar:2},
 {pos:8,num:18,name:"Shivam Chanshetti",prev:"DNS",team:"Mercedes",points:1,bar:1}
@@ -732,7 +732,7 @@ const POINTS_SCALE=[25,22,20,18,17,16,15,12,10,7,4,1];
 const SPRINT_SCALE=[15,14,13,12,11,10]; // subject-test sprints, places 1-6 (used once the Races page exists)
 const FASTEST_LAP=1,GRAND_SLAM=10; // +1 for 100/100 in any one subject; +10 for 300/300 in a CBT. A 300/300 already includes a 100/100, so they do not stack
 const MAX_PER_RACE=POINTS_SCALE[0]+GRAND_SLAM; // best CBT for one driver: 1st place + 300/300 (35)
-const TOTAL_ROUNDS=20,ROUNDS_DONE=15; // update ROUNDS_DONE after every race: hero, progress bar and title panels all follow
+const TOTAL_ROUNDS=20,ROUNDS_DONE=16; // update ROUNDS_DONE after every race: hero, progress bar and title panels all follow
 const RACES_LEFT=Math.max(0,TOTAL_ROUNDS-ROUNDS_DONE);
 /* Rounds 17-20 are the BOARD races: 25/16/10/5, +4 for full marks in a subject, +10 for above 96% overall (it replaces the +4, no stacking) */
 const BOARD_ROUNDS=[17,18,19,20],BOARD_SCALE=[25,16,10,5],BOARD_FULL=4,BOARD_SLAM_PCT=96;
@@ -804,7 +804,7 @@ return '<div class="ar tt"><span class="wi-pos">'+(i+1)+'</span><div><div class=
 
 /* ---- Next race, season progress ---- */
 const ANCHOR={round:15,start:'2026-10-11T08:00:00+05:30'}; // the one real date: round 15 ran on 11 Oct. Later dates are drafts, 3 weeks apart
-const NEXT_RACE={round:ROUNDS_DONE+1,date:'1 Nov',time:'8:00–11:00 AM IST',start:'2026-11-01T08:00:00+05:30',end:'2026-11-01T11:00:00+05:30'}; // DRAFT date: replace with the real one
+const NEXT_RACE={round:ROUNDS_DONE+1,date:'22 Nov',time:'8:00–11:00 AM IST',start:'2026-11-22T08:00:00+05:30',end:'2026-11-22T11:00:00+05:30'}; // DRAFT date: replace with the real one
 const RACE_WINNERS={14:'Mercedes'}; // round number -> winning team; add one entry after each race (unlisted rounds stay grey)
 function renderSeason(){
 document.querySelector('.round-number').textContent=ROUNDS_DONE;
@@ -910,7 +910,10 @@ const RACES=[
 {round:15,partial:true,results:[
 {d:'Anshuman Garg',rank:1,ties:2,phy:76,che:75,mat:81},{d:'Mihir Thakur',rank:1,ties:2,phy:71,che:90,mat:71},
 {d:'Aryan Mishra',rank:6},{d:'Agastya Arya',dns:true},
-{d:'Prajwal Zurale',rank:13,approx:true},{d:'Tanmay Katiyaar',rank:13,approx:true},{d:'Akshaj Yarlagadda',dns:true},{d:'Shivam Chanshetti',dns:true}]}
+{d:'Prajwal Zurale',rank:13,approx:true},{d:'Tanmay Katiyaar',rank:13,approx:true},{d:'Akshaj Yarlagadda',dns:true},{d:'Shivam Chanshetti',dns:true}]},
+{round:16,noMarks:true,results:[
+{d:'Anshuman Garg',rank:2},{d:'Mihir Thakur',rank:4},{d:'Prajwal Zurale',rank:8},{d:'Agastya Arya',rank:12},
+{d:'Aryan Mishra',rank:13,approx:true},{d:'Tanmay Katiyaar',rank:13,approx:true},{d:'Akshaj Yarlagadda',rank:13,approx:true},{d:'Shivam Chanshetti',dns:true}]}
 ];
 /* ===== How to add a race =====
    rank = overall rank among ALL 30. ties:2 = two students share that rank (they split the points of the places).
